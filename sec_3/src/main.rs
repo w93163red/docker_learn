@@ -1,12 +1,18 @@
-use unshare::Namespace;
-use unshare::Stdio;
+use std::process::Command;
+use std::process::Stdio;
+
+use nix::sched;
 
 fn main() {
-    let mut namespaces = Vec::<Namespace>::new();
-    namespaces.push(Namespace::Pid);
-    namespaces.push(Namespace::Mount);
-    // let mut cmd = std::env::args().nth(1);
-    let mut command = unshare::Command::new("ls")
+    // create isolate namespace
+    sched::unshare(
+        sched::CloneFlags::CLONE_NEWUTS
+            | sched::CloneFlags::CLONE_NEWPID
+            | sched::CloneFlags::CLONE_NEWUSER,
+    )
+    .expect("cannot create unshare");
+
+    let mut command = Command::new("sh")
         .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
         // .unshare(&namespaces)
