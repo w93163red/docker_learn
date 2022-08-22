@@ -1,0 +1,5 @@
+# Note
+
+因为Rust 标准库里面没有可以直接调用unshare的地方
+
+所以就直接用nix去call unshare的系统调用，在command被调用之前先设置unshare，然后在spawn相关语句
